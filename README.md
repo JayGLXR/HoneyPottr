@@ -208,8 +208,6 @@ HoneyPottr is released under the [MIT License](LICENSE) - free for personal and 
 ### **Disclaimer**
 HoneyPottr creates simulated artifacts and does not introduce actual vulnerabilities. Users are responsible for compliance with applicable laws and regulations in their jurisdiction.
 
-## **Support**
-
 ## **Recognition**
 
 HoneyPottr represents a novel approach to endpoint protection through deception technology. By turning malware's own evasion techniques against itself, it provides an innovative layer of defense that complements traditional security solutions.
