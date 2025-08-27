@@ -1,12 +1,14 @@
-# HoneyPottr 🍯🛡️
+# HoneyPottr 
 
 **A lightweight honeypot artifact generator that deceives malware into self-termination**
+![044E9D9A-3EE2-4782-8DA5-842329BAD797](https://github.com/user-attachments/assets/5e59efc9-081d-431a-91d7-f69d39d54b7c)
+
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-blue.svg)](https://www.microsoft.com/windows)
 [![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-green.svg)](https://github.com/JayGLXR/HoneyPottr/releases)
 
-## 🎯 **What is HoneyPottr?**
+## **What is HoneyPottr?**
 
 HoneyPottr is a cybersecurity deception tool that creates honeypot artifacts on Windows systems to trick malware into believing it's running in a sandbox or analysis environment. When sophisticated malware performs environment checks to avoid detection, it encounters these artifacts and self-terminates, protecting your system from infection.
 
@@ -22,7 +24,7 @@ When detected, the malware simply exits without deploying its payload, making it
 ### **The Solution**
 HoneyPottr flips this defensive mechanism into a protective feature by making your real system *appear* to be a honeypot or analysis environment. The malware performs its checks, finds the fake artifacts, and deletes itself - protecting your system without any user intervention.
 
-## 🛡️ **How It Works**
+## **How It Works**
 
 HoneyPottr operates as an invisible Windows service that continuously maintains realistic honeypot artifacts:
 
@@ -48,7 +50,7 @@ HoneyPottr operates as an invisible Windows service that continuously maintains 
 - Fake hardware device entries
 - VM-specific system information
 
-## 🚀 **Key Features**
+## **Key Features**
 
 - **🔍 Invisible Operation**: Runs completely in the background with no visible interface
 - **⚡ Lightweight**: < 50MB RAM usage, < 1% CPU utilization
@@ -58,7 +60,7 @@ HoneyPottr operates as an invisible Windows service that continuously maintains 
 - **🔒 Secure**: Runs with minimal privileges, digitally signed
 - **📊 Monitoring**: Built-in performance monitoring and resource limits
 
-## 📥 **Installation**
+## **Installation**
 
 ### **Quick Install (Recommended)**
 
@@ -106,7 +108,7 @@ HoneyPottr includes three pre-configured profiles:
 
 Configuration files are located in: `C:\Program Files\HoneyPottr\config\`
 
-## 🎮 **Usage**
+## **Usage**
 
 ### **Normal Operation**
 HoneyPottr operates completely automatically. Once installed:
@@ -131,7 +133,7 @@ HoneyPottr.exe --console
 HoneyPottr.exe --uninstall
 ```
 
-## 🔬 **Technical Details**
+## **Technical Details**
 
 ### **Architecture**
 - **Language**: C++20 with native Windows APIs
@@ -152,29 +154,23 @@ HoneyPottr.exe --uninstall
 - **Audit Logging**: Comprehensive operation logging
 - **Isolation**: Sandboxed execution where possible
 
-## 🚧 **Future Roadmap**
+## **Future Roadmap**
 
 HoneyPottr is actively developed with exciting features planned:
 
 ### **Version 2.0 (Coming Soon)**
-- 🧠 **AI-Powered Artifacts**: Machine learning-based artifact generation
-- 🌐 **Network Deception**: Fake network services and honeypots
-- 📱 **Mobile Indicators**: Smartphone analysis environment artifacts
-- 🔄 **Dynamic Adaptation**: Real-time artifact adjustment based on threats
+- **AI-Powered Artifacts**: Machine learning-based artifact generation
+- **Network Deception**: Fake network services and honeypots
+- **Dynamic Adaptation**: Real-time artifact adjustment based on threats
 
 ### **Cross-Platform Expansion**
-- 🐧 **Linux Version**: Native Linux honeypot artifact generator
-- 🐳 **Container Support**: Docker and Kubernetes deployment
-- ☁️ **Cloud Integration**: AWS, Azure, GCP native implementations
-- 🏗️ **Infrastructure as Code**: Terraform and Ansible modules
+- **Linux Version**: Native Linux honeypot artifact generator
+- **Container Support**: Docker and Kubernetes deployment
+- ☁**Cloud Integration**: AWS, Azure, GCP native implementations
+- 🏗**Infrastructure as Code**: Terraform and Ansible modules
 
-### **Enterprise Features**
-- 📊 **Centralized Management**: Multi-system deployment and monitoring
-- 🔍 **Threat Intelligence**: Integration with threat feeds
-- 📈 **Analytics Dashboard**: Real-time deception effectiveness metrics
-- 🚨 **SIEM Integration**: Security Information and Event Management support
 
-## 🤝 **Contributing**
+## **Contributing**
 
 We welcome contributions from the cybersecurity community!
 
@@ -195,42 +191,22 @@ cmake .. -G "Visual Studio 16 2019" -A x64
 cmake --build . --config Release
 ```
 
-### **Ways to Contribute**
-- 🐛 **Bug Reports**: Found an issue? Report it!
-- 💡 **Feature Requests**: Have ideas for new deception techniques?
-- 🔧 **Code Contributions**: Submit pull requests
-- 📚 **Documentation**: Help improve guides and examples
-- 🧪 **Testing**: Test with different malware samples
-
 ## 📜 **Legal & Compliance**
 
 ### **License**
 HoneyPottr is released under the [MIT License](LICENSE) - free for personal and commercial use.
 
 ### **Responsible Use**
-- ✅ **Legitimate Security**: Use for protecting your own systems
-- ✅ **Research**: Cybersecurity research and education
-- ✅ **Enterprise Defense**: Corporate security implementations
-- ❌ **Unauthorized Systems**: Do not install on systems you don't own
-- ❌ **Malicious Use**: Do not use for illegal activities
+- **Legitimate Security**: Use for protecting your own systems
+- **Research**: Cybersecurity research and education
+- **Enterprise Defense**: Corporate security implementations
+- **Unauthorized Systems**: Do not install on systems you don't own
+- **Malicious Use**: Do not use for illegal activities
 
 ### **Disclaimer**
 HoneyPottr creates simulated artifacts and does not introduce actual vulnerabilities. Users are responsible for compliance with applicable laws and regulations in their jurisdiction.
 
-## 🆘 **Support**
-
-### **Documentation**
-- 📖 [Installation Guide](INSTALLATION.md)
-- 🏗️ [Architecture Overview](ARCHITECTURE.md)
-- ⚖️ [Terms of Service](TERMS_OF_SERVICE.txt)
-
-### **Community**
-- 🐛 [Issue Tracker](https://github.com/JayGLXR/HoneyPottr/issues)
-- 💬 [Discussions](https://github.com/JayGLXR/HoneyPottr/discussions)
-- 📧 Contact: [Calvexa Group, LLC](mailto:support@calvexa.com)
-
-### **Professional Support**
-Enterprise support and custom implementations available through Calvexa Group, LLC.
+## **Support**
 
 ## 🏆 **Recognition**
 
@@ -238,6 +214,4 @@ HoneyPottr represents a novel approach to endpoint protection through deception 
 
 ---
 
-**Made with ❤️ by [Calvexa Group, LLC](https://calvexa.com)**
-
-*Protecting systems through intelligent deception*
+To learn more about our cutting edge technology, visit IRISC2.com. 
