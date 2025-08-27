@@ -1,6 +1,8 @@
 # HoneyPottr 
 
 **A lightweight honeypot artifact generator that deceives malware into self-termination**
+
+
 ![044E9D9A-3EE2-4782-8DA5-842329BAD797](https://github.com/user-attachments/assets/5e59efc9-081d-431a-91d7-f69d39d54b7c)
 
 
@@ -52,13 +54,13 @@ HoneyPottr operates as an invisible Windows service that continuously maintains 
 
 ## **Key Features**
 
-- **🔍 Invisible Operation**: Runs completely in the background with no visible interface
-- **⚡ Lightweight**: < 50MB RAM usage, < 1% CPU utilization
-- **🔄 Automatic**: Set-and-forget operation with automatic startup
-- **🛠️ Configurable**: Multiple artifact profiles (Basic, Advanced, Custom)
-- **🏢 Enterprise Ready**: Professional installer with Terms of Service
-- **🔒 Secure**: Runs with minimal privileges, digitally signed
-- **📊 Monitoring**: Built-in performance monitoring and resource limits
+- **Invisible Operation**: Runs completely in the background with no visible interface
+- **Lightweight**: < 50MB RAM usage, < 1% CPU utilization
+- **Automatic**: Set-and-forget operation with automatic startup
+- **Configurable**: Multiple artifact profiles (Basic, Advanced, Custom)
+- **Enterprise Ready**: Professional installer with Terms of Service
+- **Secure**: Runs with minimal privileges, digitally signed
+- **Monitoring**: Built-in performance monitoring and resource limits
 
 ## **Installation**
 
@@ -191,7 +193,7 @@ cmake .. -G "Visual Studio 16 2019" -A x64
 cmake --build . --config Release
 ```
 
-## 📜 **Legal & Compliance**
+## **Legal & Compliance**
 
 ### **License**
 HoneyPottr is released under the [MIT License](LICENSE) - free for personal and commercial use.
@@ -208,7 +210,7 @@ HoneyPottr creates simulated artifacts and does not introduce actual vulnerabili
 
 ## **Support**
 
-## 🏆 **Recognition**
+## **Recognition**
 
 HoneyPottr represents a novel approach to endpoint protection through deception technology. By turning malware's own evasion techniques against itself, it provides an innovative layer of defense that complements traditional security solutions.
 
