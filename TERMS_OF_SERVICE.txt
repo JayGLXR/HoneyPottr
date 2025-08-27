@@ -1,0 +1,66 @@
+HONEYPOTTR TERMS OF SERVICE AND END USER LICENSE AGREEMENT
+
+Copyright (c) 2025 Calvexa Group, LLC
+
+IMPORTANT - READ CAREFULLY: This End User License Agreement ("EULA") is a legal agreement between you (either an individual or a single entity) and Calvexa Group, LLC for the HoneyPottr software product, which includes computer software and may include associated media, printed materials, and "online" or electronic documentation ("SOFTWARE PRODUCT").
+
+By installing, copying, or otherwise using the SOFTWARE PRODUCT, you agree to be bound by the terms of this EULA. If you do not agree to the terms of this EULA, do not install or use the SOFTWARE PRODUCT.
+
+1. GRANT OF LICENSE
+This SOFTWARE PRODUCT is licensed under the MIT License. Subject to the terms and conditions of this license, Calvexa Group, LLC hereby grants you a worldwide, royalty-free, non-exclusive license to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the SOFTWARE PRODUCT.
+
+2. DESCRIPTION OF SOFTWARE
+HoneyPottr is a security research tool designed to create honeypot artifacts on Windows systems. The software generates system artifacts that mimic those found in honeypot and sandbox environments to deceive malware into self-termination.
+
+3. PERMITTED USES
+You may use this SOFTWARE PRODUCT for:
+- Legitimate security research purposes
+- Protection of systems you own or have explicit permission to modify
+- Educational purposes in cybersecurity
+- Commercial use in accordance with the MIT License
+
+4. PROHIBITED USES
+You may NOT use this SOFTWARE PRODUCT:
+- On systems you do not own or lack permission to modify
+- For any illegal activities or purposes
+- To circumvent security measures of third-party systems
+- In violation of applicable laws or regulations
+
+5. SYSTEM MODIFICATIONS
+WARNING: This software modifies system registry entries, creates files, and simulates system services. By installing and using this software, you acknowledge that:
+- The software will create honeypot artifacts on your system
+- These modifications are intended to deceive malware
+- You have the authority to make these modifications to your system
+- You understand the implications of these system changes
+
+6. NO WARRANTY
+THE SOFTWARE PRODUCT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL CALVEXA GROUP, LLC BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+7. LIMITATION OF LIABILITY
+In no event shall Calvexa Group, LLC be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software.
+
+8. COMPLIANCE WITH LAWS
+You agree to comply with all applicable laws and regulations in your use of the SOFTWARE PRODUCT. This includes but is not limited to:
+- Computer fraud and abuse laws
+- Privacy and data protection regulations
+- Export control laws
+- Cybersecurity regulations in your jurisdiction
+
+9. INDEMNIFICATION
+You agree to indemnify, defend, and hold harmless Calvexa Group, LLC from and against any and all claims, damages, obligations, losses, liabilities, costs, and expenses (including attorney's fees) arising from your use of the SOFTWARE PRODUCT.
+
+10. TERMINATION
+This license is effective until terminated. Your rights under this license will terminate automatically without notice from Calvexa Group, LLC if you fail to comply with any term(s) of this EULA.
+
+11. GOVERNING LAW
+This EULA shall be governed by and construed in accordance with the laws of the jurisdiction where Calvexa Group, LLC is incorporated, without regard to its conflict of law provisions.
+
+12. ENTIRE AGREEMENT
+This EULA constitutes the entire agreement between you and Calvexa Group, LLC regarding the SOFTWARE PRODUCT and supersedes all prior or contemporaneous understandings regarding such subject matter.
+
+13. ACKNOWLEDGMENT
+BY CLICKING "I AGREE" OR BY INSTALLING, COPYING, OR OTHERWISE USING THE SOFTWARE PRODUCT, YOU ACKNOWLEDGE THAT YOU HAVE READ THIS EULA, UNDERSTAND IT, AND AGREE TO BE BOUND BY ITS TERMS AND CONDITIONS.
+
+For questions regarding this EULA, please contact Calvexa Group, LLC.
+
+Last updated: August 26, 2025

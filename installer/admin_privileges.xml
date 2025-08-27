@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CPackWiXPatch>
+  <!-- Require administrator privileges for installation -->
+  <CPackWiXFragment Id="CM_CP_HoneyPottr.exe">
+    <Package InstallerVersion="200" 
+             Compressed="yes" 
+             InstallScope="perMachine"
+             InstallPrivileges="elevated" />
+    
+    <!-- Condition to check for administrator privileges -->
+    <Condition Message="This application requires administrator privileges to install and configure the Windows service.">
+      Privileged
+    </Condition>
+    
+    <!-- Launch conditions -->
+    <LaunchConditions>
+      <LaunchCondition Condition="Privileged" 
+                        Message="You must be an administrator to install this application." />
+    </LaunchConditions>
+  </CPackWiXFragment>
+</CPackWiXPatch>

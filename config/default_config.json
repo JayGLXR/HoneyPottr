@@ -1,0 +1,109 @@
+{
+  "service": {
+    "name": "HoneyPottr",
+    "displayName": "HoneyPottr Honeypot Artifact Generator",
+    "description": "Generates honeypot artifacts to deceive malware into self-termination",
+    "updateInterval": 3600,
+    "monitoringInterval": 30,
+    "logLevel": "INFO",
+    "resourceLimits": {
+      "maxMemoryMB": 50,
+      "maxCpuPercent": 1.0,
+      "maxDiskIOPS": 100,
+      "maxNetworkBPS": 1024
+    }
+  },
+  "artifacts": {
+    "profiles": ["basic"],
+    "refreshInterval": 7200,
+    "modules": {
+      "registry": {
+        "enabled": true,
+        "intensity": "medium",
+        "refreshInterval": 3600,
+        "parameters": {
+          "createVMwareKeys": true,
+          "createVirtualBoxKeys": true,
+          "createSandboxieKeys": true,
+          "createAnalysisToolKeys": true
+        }
+      },
+      "filesystem": {
+        "enabled": true,
+        "intensity": "high",
+        "refreshInterval": 7200,
+        "parameters": {
+          "createVMwareFiles": true,
+          "createVirtualBoxFiles": true,
+          "createAnalysisToolFiles": true,
+          "createDecoyFiles": true,
+          "filePermissions": "readonly"
+        }
+      },
+      "processes": {
+        "enabled": true,
+        "intensity": "low",
+        "refreshInterval": 1800,
+        "parameters": {
+          "simulateVMwareServices": true,
+          "simulateVirtualBoxServices": true,
+          "simulateAnalysisTools": false,
+          "processVisibility": "limited"
+        }
+      },
+      "network": {
+        "enabled": false,
+        "intensity": "low",
+        "refreshInterval": 3600,
+        "parameters": {
+          "createVirtualAdapters": false,
+          "simulateVMwareNetwork": false,
+          "simulateVirtualBoxNetwork": false
+        }
+      },
+      "hardware": {
+        "enabled": true,
+        "intensity": "medium",
+        "refreshInterval": 86400,
+        "parameters": {
+          "simulateVMwareBIOS": true,
+          "simulateVirtualBoxBIOS": true,
+          "simulateVirtualHardware": true,
+          "hardwareVisibility": "wmi_only"
+        }
+      }
+    }
+  },
+  "logging": {
+    "logFile": "logs/honeypottr.log",
+    "maxLogFileSizeMB": 10,
+    "maxLogFiles": 5,
+    "logToEventLog": true,
+    "eventLogSource": "HoneyPottr",
+    "logToConsole": false,
+    "structuredLogging": true
+  },
+  "security": {
+    "encryptConfiguration": false,
+    "encryptionAlgorithm": "AES-256-GCM",
+    "certificateStore": "MY",
+    "certificateSubject": "CN=HoneyPottr",
+    "validateSignatures": true,
+    "secureUpdateChannel": true
+  },
+  "monitoring": {
+    "enablePerformanceCounters": true,
+    "enableHealthChecks": true,
+    "healthCheckInterval": 60,
+    "alertOnResourceExceeded": true,
+    "alertOnArtifactFailure": true,
+    "metricsRetentionDays": 7
+  },
+  "updates": {
+    "autoUpdate": false,
+    "updateCheckInterval": 86400,
+    "updateServer": "",
+    "allowBetaUpdates": false,
+    "backupConfigOnUpdate": true
+  }
+}

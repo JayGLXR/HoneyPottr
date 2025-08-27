@@ -1,0 +1,153 @@
+# HoneyPottr .gitignore
+
+# Build directories and artifacts
+build/
+build-*/
+bin/
+obj/
+out/
+x64/
+x86/
+Debug/
+Release/
+RelWithDebInfo/
+MinSizeRel/
+
+# Visual Studio files
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
+*.sln.docstates
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# Compiled executables and libraries
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.exp
+*.obj
+*.o
+*.a
+*.so
+*.dylib
+
+# Installer packages (keep source, ignore built installers)
+*.msi
+*.msm
+*.msp
+*.cab
+HoneyPottr-Installer-*.exe
+HoneyPottr-Windows-*.tar.gz
+HoneyPottr-*.zip
+
+# Temporary and cache files
+*.tmp
+*.temp
+*.cache
+*.log
+*.tlog
+*.idb
+*.ipch
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE and editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Package manager files
+vcpkg_installed/
+packages/
+node_modules/
+
+# Test and coverage files
+*.gcov
+*.gcda
+*.gcno
+coverage/
+*.coverage
+*.coveragexml
+
+# Documentation build artifacts
+docs/_build/
+site/
+
+# Backup and temporary files
+*.bak
+*.backup
+*.orig
+*.rej
+*~
+
+# Windows specific
+*.lnk
+
+# Logs and runtime files
+logs/
+*.log
+*.pid
+
+# Configuration files with sensitive data
+config/local_*.json
+config/production_*.json
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Development and testing artifacts
+test_results/
+benchmark_results/
+profiling/
+dumps/
+
+# Deployment packages (keep installer source)
+HoneyPottr-Windows-Package/
+deployment/
+dist/
+
+# Keep important files that might match patterns above
+!README.md
+!LICENSE
+!TERMS_OF_SERVICE.txt
+!INSTALLATION.md
+!ARCHITECTURE.md
+!config/default_config.json
+!config/basic_profile.json
+!config/advanced_profile.json
+!resources/honeypottr.ico
+!installer/HoneyPottr-Simple.nsi
