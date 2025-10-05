@@ -1,0 +1,138 @@
+# Build directories
+build/
+build-*/
+bin/
+obj/
+out/
+cmake-build-*/
+.cmake/
+
+# IDE and editor files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosstore
+*.sln.docstates
+*.vcxproj.user
+*.code-workspace
+.DS_Store
+
+# Compiled files
+*.exe
+*.dll
+*.so
+*.dylib
+*.obj
+*.o
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.a
+
+# Installer artifacts
+*.msi
+*.msm
+*.msp
+*.wixobj
+*.wixpdb
+installer/*.exe
+!installer/*.nsi
+!installer/*.wxs
+
+# Logs and runtime files
+logs/
+*.log
+*.log.*
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+*.bak
+*.swp
+*.swo
+*~
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Spotlight-V100
+.Trashes
+
+# Package manager
+vcpkg_installed/
+packages/
+node_modules/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+_deps/
+install_manifest.txt
+
+# Visual Studio
+.vs/
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+ipch/
+*.aps
+*.ncb
+*.opendb
+*.cachefile
+*.VC.VC.opendb
+
+# Compiler output
+*.idb
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tlog
+*.lastbuildstate
+*.unsuccessfulbuild
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
+!HoneyPottr\ Installer.zip
+
+# Sensitive data (if any)
+*.pfx
+*.p12
+secrets/
+.env
+.env.local
+
+# Test output
+test_results/
+coverage/
+TestResults/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Backup files
+*_backup
+*_old
+*.orig
+
+# Development notes
+TODO.txt
+NOTES.txt
+scratch/

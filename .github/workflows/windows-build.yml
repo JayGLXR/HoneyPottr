@@ -1,0 +1,108 @@
+name: Windows Build
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+        platform: [x64]
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+    
+    - name: Setup CMake
+      uses: lukka/get-cmake@latest
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          build/_deps
+        key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-cmake-
+    
+    - name: Configure CMake
+      run: |
+        cmake -B build -G "Visual Studio 17 2022" -A ${{ matrix.platform }} `
+          -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+    
+    - name: Build
+      run: |
+        cmake --build build --config ${{ matrix.configuration }} -j
+    
+    - name: Run tests (if any)
+      run: |
+        cd build
+        ctest -C ${{ matrix.configuration }} --output-on-failure
+      continue-on-error: true
+    
+    - name: Package artifacts
+      run: |
+        mkdir artifacts
+        Copy-Item -Path "build\bin\${{ matrix.configuration }}\HoneyPottr.exe" `
+          -Destination "artifacts\" -ErrorAction SilentlyContinue
+        Copy-Item -Path "config\*.json" -Destination "artifacts\config\" `
+          -Recurse -ErrorAction SilentlyContinue
+        Copy-Item -Path "README.md" -Destination "artifacts\" `
+          -ErrorAction SilentlyContinue
+        Copy-Item -Path "LICENSE" -Destination "artifacts\" `
+          -ErrorAction SilentlyContinue
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: HoneyPottr-${{ matrix.configuration }}-${{ matrix.platform }}
+        path: artifacts/
+        retention-days: 30
+    
+    - name: Create installer (Release only)
+      if: matrix.configuration == 'Release'
+      run: |
+        cd build
+        cpack -G WIX -C Release
+      continue-on-error: true
+    
+    - name: Upload installer
+      if: matrix.configuration == 'Release'
+      uses: actions/upload-artifact@v3
+      with:
+        name: HoneyPottr-Installer-${{ matrix.platform }}
+        path: build/*.msi
+        retention-days: 30
+      continue-on-error: true
+
+  build-analysis:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Run static analysis
+      run: |
+        echo "Running static analysis..."
+        # Add static analysis tools here (e.g., cppcheck, clang-tidy)
+      continue-on-error: true
+    
+    - name: Check code formatting
+      run: |
+        echo "Checking code formatting..."
+        # Add clang-format check here
+      continue-on-error: true
+

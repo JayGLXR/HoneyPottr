@@ -1,6 +1,13 @@
-#include "service/ServiceController.h"
-#include "common/Constants.h"
 #include <iostream>
+#include <mutex>
+#include <thread>
+#include <chrono>
+#include "service/ServiceController.h"
+#include "config/ConfigurationManager.h"
+#include "logging/Logger.h"
+#include "monitoring/ResourceMonitor.h"
+#include "artifacts/ArtifactEngine.h"
+#include "common/Constants.h"
 
 namespace HoneyPottr {
 
@@ -17,6 +24,7 @@ ServiceController::ServiceController()
 
 ServiceController::~ServiceController() {
     Stop();
+    ShutdownSubsystems();
 }
 
 bool ServiceController::Initialize(const std::string& configPath) {
@@ -24,7 +32,12 @@ bool ServiceController::Initialize(const std::string& configPath) {
     
     std::cout << "ServiceController: Initializing with config: " << m_configPath << std::endl;
     
-    // TODO: Initialize all subsystems
+    // Initialize all subsystems
+    if (!InitializeSubsystems()) {
+        std::cerr << "ServiceController: Failed to initialize subsystems" << std::endl;
+        return false;
+    }
+    
     UpdateState(ServiceState::Stopped);
     return true;
 }
@@ -35,15 +48,35 @@ bool ServiceController::Start() {
     }
     
     UpdateState(ServiceState::Starting);
-    std::cout << "ServiceController: Starting service..." << std::endl;
     
-    // TODO: Start all subsystems
+    if (m_logger) {
+        m_logger->Info("Starting HoneyPottr service", "ServiceController");
+    }
+    
+    // Start resource monitoring
+    if (m_resourceMonitor) {
+        m_resourceMonitor->Start();
+    }
+    
+    // Start artifact engine
+    if (m_artifactEngine) {
+        if (!m_artifactEngine->Start()) {
+            if (m_logger) {
+                m_logger->Error("Failed to start artifact engine", "ServiceController");
+            }
+            return false;
+        }
+    }
     
     UpdateState(ServiceState::Running);
     
     // Start service loop in separate thread
     m_shouldStop = false;
     m_serviceThread = std::thread(&ServiceController::ServiceLoop, this);
+    
+    if (m_logger) {
+        m_logger->Info("HoneyPottr service started successfully", "ServiceController");
+    }
     
     return true;
 }
@@ -54,7 +87,10 @@ bool ServiceController::Stop() {
     }
     
     UpdateState(ServiceState::Stopping);
-    std::cout << "ServiceController: Stopping service..." << std::endl;
+    
+    if (m_logger) {
+        m_logger->Info("Stopping HoneyPottr service", "ServiceController");
+    }
     
     m_shouldStop = true;
     
@@ -62,9 +98,21 @@ bool ServiceController::Stop() {
         m_serviceThread.join();
     }
     
-    // TODO: Stop all subsystems
+    // Stop all subsystems
+    if (m_artifactEngine) {
+        m_artifactEngine->Stop();
+    }
+    
+    if (m_resourceMonitor) {
+        m_resourceMonitor->Stop();
+    }
     
     UpdateState(ServiceState::Stopped);
+    
+    if (m_logger) {
+        m_logger->Info("HoneyPottr service stopped", "ServiceController");
+    }
+    
     return true;
 }
 
@@ -97,31 +145,64 @@ bool ServiceController::IsRunning() const {
 }
 
 bool ServiceController::ReloadConfiguration() {
-    std::cout << "ServiceController: Reloading configuration..." << std::endl;
-    // TODO: Implement configuration reload
+    if (m_logger) {
+        m_logger->Info("Reloading configuration", "ServiceController");
+    }
+    
+    if (m_configManager) {
+        if (!m_configManager->ReloadConfiguration()) {
+            if (m_logger) {
+                m_logger->Error("Failed to reload configuration", "ServiceController");
+            }
+            return false;
+        }
+    }
+    
+    // Restart artifact engine with new configuration
+    if (m_state == ServiceState::Running && m_artifactEngine) {
+        m_artifactEngine->Stop();
+        if (!m_artifactEngine->Initialize(m_configManager, m_logger)) {
+            if (m_logger) {
+                m_logger->Error("Failed to reinitialize artifact engine", "ServiceController");
+            }
+            return false;
+        }
+        m_artifactEngine->Start();
+    }
+    
+    if (m_logger) {
+        m_logger->Info("Configuration reloaded successfully", "ServiceController");
+    }
+    
     return true;
 }
 
 PerformanceMetrics ServiceController::GetMetrics() const {
     PerformanceMetrics metrics = {};
     metrics.timestamp = std::chrono::steady_clock::now();
-    metrics.cpuUsage = 0.5; // Placeholder
-    metrics.memoryUsageMB = 25; // Placeholder
+    
+    if (m_resourceMonitor) {
+        metrics = m_resourceMonitor->GetMetrics();
+    }
+    
     return metrics;
 }
 
 void ServiceController::SetStateCallback(ServiceStateCallback callback) {
     std::lock_guard<std::mutex> lock(m_callbackMutex);
+    (void)lock; // Suppress unused variable warning
     m_stateCallback = callback;
 }
 
 void ServiceController::SetErrorCallback(ErrorCallback callback) {
     std::lock_guard<std::mutex> lock(m_callbackMutex);
+    (void)lock; // Suppress unused variable warning
     m_errorCallback = callback;
 }
 
 void ServiceController::SetMetricsCallback(MetricsCallback callback) {
     std::lock_guard<std::mutex> lock(m_callbackMutex);
+    (void)lock; // Suppress unused variable warning
     m_metricsCallback = callback;
 }
 
@@ -157,12 +238,75 @@ void ServiceController::ServiceLoop() {
 }
 
 bool ServiceController::InitializeSubsystems() {
-    // TODO: Initialize all subsystems
-    return true;
+    try {
+        // Initialize Configuration Manager
+        m_configManager = new ConfigurationManager();
+        if (!m_configManager->LoadConfiguration(m_configPath)) {
+            std::cerr << "Failed to load configuration" << std::endl;
+            return false;
+        }
+        
+        // Initialize Logger
+        m_logger = new Logger();
+        if (!m_logger->Initialize(
+            m_configManager->GetLogFilePath(),
+            m_configManager->GetLogLevel(),
+            10, // max file size MB
+            5,  // max log files
+            m_configManager->IsEventLogEnabled(),
+            m_configManager->IsConsoleLogEnabled()
+        )) {
+            std::cerr << "Failed to initialize logger" << std::endl;
+            return false;
+        }
+        
+        m_logger->Info("HoneyPottr service initializing", "ServiceController");
+        
+        // Initialize Resource Monitor
+        m_resourceMonitor = new ResourceMonitor();
+        if (!m_resourceMonitor->Initialize(m_configManager->GetResourceLimits(), m_logger)) {
+            m_logger->Error("Failed to initialize resource monitor", "ServiceController");
+            return false;
+        }
+        
+        // Initialize Artifact Engine
+        m_artifactEngine = new ArtifactEngine();
+        if (!m_artifactEngine->Initialize(m_configManager, m_logger)) {
+            m_logger->Error("Failed to initialize artifact engine", "ServiceController");
+            return false;
+        }
+        
+        m_logger->Info("All subsystems initialized successfully", "ServiceController");
+        return true;
+        
+    } catch (const std::exception& e) {
+        std::cerr << "Exception during initialization: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 void ServiceController::ShutdownSubsystems() {
-    // TODO: Shutdown all subsystems
+    if (m_artifactEngine) {
+        delete m_artifactEngine;
+        m_artifactEngine = nullptr;
+    }
+    
+    if (m_resourceMonitor) {
+        delete m_resourceMonitor;
+        m_resourceMonitor = nullptr;
+    }
+    
+    if (m_logger) {
+        m_logger->Info("Shutting down HoneyPottr service", "ServiceController");
+        m_logger->Shutdown();
+        delete m_logger;
+        m_logger = nullptr;
+    }
+    
+    if (m_configManager) {
+        delete m_configManager;
+        m_configManager = nullptr;
+    }
 }
 
 void ServiceController::UpdateState(ServiceState newState) {
@@ -170,6 +314,7 @@ void ServiceController::UpdateState(ServiceState newState) {
     
     if (oldState != newState) {
         std::lock_guard<std::mutex> lock(m_callbackMutex);
+        (void)lock; // Suppress unused variable warning
         if (m_stateCallback) {
             m_stateCallback(newState);
         }
@@ -180,6 +325,7 @@ void ServiceController::HandleError(const std::string& error) {
     std::cerr << "ServiceController Error: " << error << std::endl;
     
     std::lock_guard<std::mutex> lock(m_callbackMutex);
+    (void)lock; // Suppress unused variable warning
     if (m_errorCallback) {
         m_errorCallback(error);
     }
@@ -190,7 +336,18 @@ void ServiceController::PerformMaintenance() {
     auto timeSinceLastMaintenance = std::chrono::duration_cast<std::chrono::seconds>(now - m_lastMaintenanceTime);
     
     if (timeSinceLastMaintenance.count() >= 300) { // 5 minutes
-        // TODO: Perform maintenance tasks
+        if (m_logger) {
+            m_logger->Debug("Performing maintenance tasks", "ServiceController");
+        }
+        
+        // Refresh artifacts
+        if (m_artifactEngine && m_artifactEngine->IsRunning()) {
+            m_artifactEngine->Refresh();
+        }
+        
+        // Check for configuration changes
+        // In a production system, you might watch for file changes
+        
         m_lastMaintenanceTime = now;
     }
 }
@@ -202,9 +359,21 @@ void ServiceController::CheckResourceUsage() {
     if (timeSinceLastMetrics.count() >= 30) { // 30 seconds
         PerformanceMetrics metrics = GetMetrics();
         
-        std::lock_guard<std::mutex> lock(m_callbackMutex);
-        if (m_metricsCallback) {
-            m_metricsCallback(metrics);
+        // Check if resource limits are exceeded
+        if (m_resourceMonitor && m_resourceMonitor->IsResourceLimitExceeded()) {
+            if (m_logger) {
+                m_logger->Warning("Resource limits exceeded", "ServiceController");
+            }
+            
+            // Could implement throttling here
+        }
+        
+        {
+            std::lock_guard<std::mutex> lock(m_callbackMutex);
+            (void)lock; // Suppress unused variable warning
+            if (m_metricsCallback) {
+                m_metricsCallback(metrics);
+            }
         }
         
         m_lastMetricsTime = now;

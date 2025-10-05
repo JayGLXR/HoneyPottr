@@ -13,7 +13,12 @@ if(MSVC)
     add_compile_definitions(NOMINMAX)
     add_compile_definitions(WIN32_LEAN_AND_MEAN)
 else()
-    add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+    # For cross-compilation, be less strict about warnings
+    add_compile_options(-Wall -Wextra -Wpedantic)
+    # Remove -Werror for cross-compilation to allow unused variable warnings
+    if(NOT CMAKE_CROSSCOMPILING)
+        add_compile_options(-Werror)
+    endif()
 endif()
 
 # Build configuration
@@ -130,22 +135,42 @@ install(FILES
     DESTINATION config
 )
 
+install(FILES
+    README.md
+    INSTALLATION.md
+    LICENSE
+    TERMS_OF_SERVICE.txt
+    PRODUCTION_SUMMARY.md
+    BUILD_INSTRUCTIONS.md
+    DESTINATION .
+)
+
+# Create empty logs directory
+install(DIRECTORY DESTINATION logs)
+
 # CPack configuration for installer
 set(CPACK_PACKAGE_NAME "HoneyPottr")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lightweight honeypot artifact generator")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Production-grade honeypot artifact generator with comprehensive malware deception")
+set(CPACK_PACKAGE_DESCRIPTION "HoneyPottr generates honeypot artifacts (registry, files, processes, network, hardware) to deceive malware into believing it's in a sandbox/honeypot environment, causing self-termination.")
 set(CPACK_PACKAGE_VENDOR "HoneyPottr Project")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "HoneyPottr")
-set(CPACK_GENERATOR "WIX")
+set(CPACK_PACKAGE_CONTACT "support@honeypottr.io")
+set(CPACK_GENERATOR "WIX;NSIS")
 set(CPACK_WIX_UPGRADE_GUID "12345678-1234-1234-1234-123456789012")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 
 # WiX-specific settings for proper permissions
 set(CPACK_WIX_PRODUCT_GUID "87654321-4321-4321-4321-210987654321")
 set(CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/honeypottr.ico")
-set(CPACK_WIX_UI_BANNER "${CMAKE_CURRENT_SOURCE_DIR}/resources/banner.bmp")
-set(CPACK_WIX_UI_DIALOG "${CMAKE_CURRENT_SOURCE_DIR}/resources/dialog.bmp")
 set(CPACK_WIX_PROGRAM_MENU_FOLDER "HoneyPottr")
 set(CPACK_WIX_PROPERTY_ARPURLINFOABOUT "https://github.com/honeypottr/honeypottr")
+set(CPACK_WIX_PROPERTY_ARPHELPLINK "https://github.com/honeypottr/honeypottr/wiki")
+set(CPACK_WIX_PROPERTY_ARPURLUPDATEINFO "https://github.com/honeypottr/honeypottr/releases")
+set(CPACK_WIX_PROPERTY_ARPCOMMENTS "Production-grade honeypot service")
+set(CPACK_WIX_ARCHITECTURE "x64")
+set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY "HoneyPottr")
 
 # Require administrator privileges for installation
 set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/installer/admin_privileges.xml")

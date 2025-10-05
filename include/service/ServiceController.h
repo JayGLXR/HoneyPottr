@@ -1,11 +1,11 @@
 #pragma once
 
-#include "common/Types.h"
 #include <memory>
 #include <atomic>
 #include <thread>
 #include <mutex>
 #include <chrono>
+#include "common/Types.h"
 
 namespace HoneyPottr {
 

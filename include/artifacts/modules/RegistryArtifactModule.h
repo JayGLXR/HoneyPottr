@@ -7,6 +7,9 @@
 
 namespace HoneyPottr {
 
+// Forward declaration
+class Logger;
+
 /**
  * @brief Registry artifact module for creating honeypot registry entries
  * 
@@ -32,6 +35,7 @@ public:
     bool ValidateEnvironment() const override;
     std::string GetModuleName() const override;
     std::string GetVersion() const override;
+    void SetLogger(Logger* logger) override;
 
 protected:
     void LogMessage(LogLevel level, const std::string& message) const override;
@@ -129,6 +133,7 @@ private:
     ArtifactConfig m_config;
     bool m_isActive;
     std::vector<RegistryKey> m_registryKeys;
+    Logger* m_logger;
     
     // Performance tracking
     mutable PerformanceMetrics m_metrics;

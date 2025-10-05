@@ -9,31 +9,51 @@
            Manufacturer="HoneyPottr Project" 
            UpgradeCode="12345678-1234-1234-1234-123456789012">
     
-    <Package InstallerVersion="200" 
+    <Package InstallerVersion="500" 
              Compressed="yes" 
              InstallScope="perMachine"
              InstallPrivileges="elevated"
-             Description="HoneyPottr Honeypot Artifact Generator"
-             Comments="Lightweight honeypot artifact generator for Windows" />
+             Platform="x64"
+             Description="HoneyPottr Honeypot Artifact Generator v1.0.0"
+             Comments="Production-grade honeypot artifact generator with comprehensive malware deception capabilities" 
+             Keywords="honeypot,malware,security,deception"
+             Manufacturer="HoneyPottr Project" />
 
     <!-- Require administrator privileges -->
     <Condition Message="This application requires administrator privileges to install.">
       Privileged
     </Condition>
 
-    <!-- Minimum Windows version (Windows 7) -->
-    <Condition Message="This application requires Windows 7 or later.">
-      <![CDATA[Installed OR (VersionNT >= 601)]]>
+    <!-- Minimum Windows version (Windows 10) -->
+    <Condition Message="This application requires Windows 10 or later (64-bit).">
+      <![CDATA[Installed OR (VersionNT >= 1000 AND VersionNT64)]]>
+    </Condition>
+    
+    <!-- Check for .NET Framework (if needed) -->
+    <PropertyRef Id="NETFRAMEWORK45" />
+    
+    <!-- Prevent installation on 32-bit systems -->
+    <Condition Message="This application requires a 64-bit operating system.">
+      <![CDATA[Installed OR VersionNT64]]>
     </Condition>
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
     <!-- Features -->
-    <Feature Id="ProductFeature" Title="HoneyPottr" Level="1">
+    <Feature Id="ProductFeature" Title="HoneyPottr Core" Level="1" 
+             Display="expand" ConfigurableDirectory="INSTALLFOLDER"
+             Description="Core application, service, and configuration files">
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentGroupRef Id="ConfigComponents" />
+      <ComponentGroupRef Id="DocumentationComponents" />
       <ComponentRef Id="ServiceComponent" />
+      <ComponentRef Id="ShortcutComponent" />
+    </Feature>
+    
+    <Feature Id="LogsFeature" Title="Logs Directory" Level="1"
+             Description="Directory for log files with proper permissions">
+      <ComponentRef Id="LogsComponent" />
     </Feature>
 
     <!-- Directory structure -->
@@ -53,64 +73,103 @@
 
     <!-- Main application components -->
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="MainExecutable" Guid="*">
+      <Component Id="MainExecutable" Guid="*" Win64="yes">
         <File Id="HoneyPottrExe" 
-              Source="$(var.HoneyPottr.TargetPath)" 
+              Source="bin/Release/HoneyPottr.exe" 
               KeyPath="yes" 
-              Checksum="yes" />
+              Checksum="yes" 
+              Vital="yes" />
         
-        <!-- Create logs directory with proper permissions -->
-        <CreateFolder Directory="LogsFolder">
-          <util:PermissionEx User="SYSTEM" GenericAll="yes" />
-          <util:PermissionEx User="Administrators" GenericAll="yes" />
-          <util:PermissionEx User="[SERVICEACCOUNT]" GenericRead="yes" GenericWrite="yes" />
-        </CreateFolder>
+        <!-- Registry entry for application path -->
+        <RegistryKey Root="HKLM" Key="SOFTWARE\HoneyPottr">
+          <RegistryValue Type="string" Name="InstallPath" Value="[INSTALLFOLDER]" />
+          <RegistryValue Type="string" Name="Version" Value="1.0.0" />
+          <RegistryValue Type="string" Name="InstallDate" Value="[Date]" />
+        </RegistryKey>
       </Component>
     </ComponentGroup>
+    
+    <!-- Logs directory component -->
+    <Component Id="LogsComponent" Directory="LogsFolder" Guid="*" Win64="yes">
+      <CreateFolder>
+        <util:PermissionEx User="SYSTEM" GenericAll="yes" />
+        <util:PermissionEx User="Administrators" GenericAll="yes" />
+        <util:PermissionEx User="NT AUTHORITY\LocalService" GenericRead="yes" GenericWrite="yes" />
+        <util:PermissionEx User="Everyone" GenericRead="yes" />
+      </CreateFolder>
+      <RemoveFolder Id="RemoveLogsFolder" On="uninstall" />
+      <RegistryValue Root="HKLM" Key="SOFTWARE\HoneyPottr" 
+                     Type="integer" Name="LogsCreated" Value="1" KeyPath="yes" />
+    </Component>
 
     <!-- Configuration files -->
     <ComponentGroup Id="ConfigComponents" Directory="ConfigFolder">
-      <Component Id="DefaultConfig" Guid="*">
+      <Component Id="DefaultConfig" Guid="*" Win64="yes" NeverOverwrite="yes">
         <File Id="DefaultConfigJson" 
               Source="config/default_config.json" 
               KeyPath="yes" />
       </Component>
       
-      <Component Id="BasicProfile" Guid="*">
+      <Component Id="BasicProfile" Guid="*" Win64="yes" NeverOverwrite="yes">
         <File Id="BasicProfileJson" 
               Source="config/basic_profile.json" 
               KeyPath="yes" />
       </Component>
       
-      <Component Id="AdvancedProfile" Guid="*">
+      <Component Id="AdvancedProfile" Guid="*" Win64="yes" NeverOverwrite="yes">
         <File Id="AdvancedProfileJson" 
               Source="config/advanced_profile.json" 
               KeyPath="yes" />
       </Component>
     </ComponentGroup>
+    
+    <!-- Documentation files -->
+    <ComponentGroup Id="DocumentationComponents" Directory="INSTALLFOLDER">
+      <Component Id="Documentation" Guid="*" Win64="yes">
+        <File Id="ReadmeFile" Source="README.md" />
+        <File Id="InstallationFile" Source="INSTALLATION.md" />
+        <File Id="LicenseFile" Source="LICENSE" />
+        <File Id="TermsFile" Source="TERMS_OF_SERVICE.txt" />
+        <File Id="ProductionSummaryFile" Source="PRODUCTION_SUMMARY.md" />
+        <File Id="BuildInstructionsFile" Source="BUILD_INSTRUCTIONS.md" />
+      </Component>
+    </ComponentGroup>
 
     <!-- Service installation component -->
-    <Component Id="ServiceComponent" Directory="INSTALLFOLDER" Guid="*">
+    <Component Id="ServiceComponent" Directory="INSTALLFOLDER" Guid="*" Win64="yes">
       <ServiceInstall Id="HoneyPottrService"
                       Type="ownProcess"
                       Name="HoneyPottr"
                       DisplayName="HoneyPottr Honeypot Artifact Generator"
-                      Description="Generates honeypot artifacts to deceive malware into self-termination"
+                      Description="Production-grade honeypot service that generates VM and analysis tool artifacts to deceive malware into self-termination. Operates with minimal resource footprint."
                       Start="auto"
                       Account="LocalSystem"
                       ErrorControl="normal"
                       Interactive="no"
-                      Vital="yes">
+                      Vital="yes"
+                      Arguments="[INSTALLFOLDER]config\default_config.json">
         
-        <!-- Service dependencies -->
+        <!-- Service dependencies - require WMI for hardware artifacts -->
         <ServiceDependency Id="RpcSs" />
         <ServiceDependency Id="Winmgmt" />
+        <ServiceDependency Id="Tcpip" />
         
-        <!-- Service configuration -->
+        <!-- Advanced service configuration -->
         <ServiceConfig DelayedAutoStart="yes"
-                       FailureActionsWhen="failedToStop"
+                       FailureActionsWhen="failedToStopOrReturnedError"
                        ResetPeriodInDays="1"
-                       RestartServiceDelayInSeconds="5" />
+                       RestartServiceDelayInSeconds="5" 
+                       OnInstall="yes"
+                       OnReinstall="yes"
+                       OnUninstall="no" />
+        
+        <!-- Failure recovery actions -->
+        <util:ServiceConfig
+            FirstFailureActionType="restart"
+            SecondFailureActionType="restart"
+            ThirdFailureActionType="restart"
+            RestartServiceDelayInSeconds="5"
+            ResetPeriodInDays="1" />
       </ServiceInstall>
 
       <!-- Service control -->
@@ -123,31 +182,72 @@
 
       <!-- Registry permissions for the service -->
       <RegistryKey Root="HKLM" 
-                   Key="SYSTEM\CurrentControlSet\Services\HoneyPottr">
+                   Key="SYSTEM\CurrentControlSet\Services\HoneyPottr"
+                   ForceCreateOnInstall="yes">
         <util:PermissionEx User="SYSTEM" GenericAll="yes" />
         <util:PermissionEx User="Administrators" GenericAll="yes" />
+        <RegistryValue Type="integer" Name="Type" Value="16" />
+        <RegistryValue Type="integer" Name="Start" Value="2" />
+        <RegistryValue Type="integer" Name="ErrorControl" Value="1" />
+        <RegistryValue Type="expandable" Name="ImagePath" 
+                       Value="&quot;[INSTALLFOLDER]HoneyPottr.exe&quot;" />
+      </RegistryKey>
+      
+      <!-- Application registry -->
+      <RegistryKey Root="HKLM" Key="SOFTWARE\HoneyPottr">
+        <RegistryValue Type="string" Name="ConfigPath" Value="[INSTALLFOLDER]config\default_config.json" />
+        <RegistryValue Type="string" Name="LogPath" Value="[INSTALLFOLDER]logs" />
+        <RegistryValue Type="integer" Name="Installed" Value="1" KeyPath="yes" />
       </RegistryKey>
     </Component>
 
     <!-- Start Menu shortcuts -->
-    <Component Id="ApplicationShortcut" Directory="ApplicationProgramsFolder" Guid="*">
-      <Shortcut Id="ApplicationStartMenuShortcut"
-                Name="HoneyPottr Console"
-                Description="Run HoneyPottr in console mode"
+    <Component Id="ShortcutComponent" Directory="ApplicationProgramsFolder" Guid="*" Win64="yes">
+      <Shortcut Id="ConsoleShortcut"
+                Name="HoneyPottr Console Mode"
+                Description="Test HoneyPottr in console mode (for testing only)"
                 Target="[#HoneyPottrExe]"
                 Arguments="--console"
+                WorkingDirectory="INSTALLFOLDER"
+                Icon="HoneyPottrIcon" />
+      
+      <Shortcut Id="ServicesShortcut"
+                Name="Manage HoneyPottr Service"
+                Description="Open Services management console"
+                Target="[SystemFolder]mmc.exe"
+                Arguments="services.msc /s"
+                WorkingDirectory="SystemFolder" />
+      
+      <Shortcut Id="ConfigShortcut"
+                Name="HoneyPottr Configuration"
+                Description="Edit HoneyPottr configuration"
+                Target="notepad.exe"
+                Arguments="[INSTALLFOLDER]config\default_config.json"
+                WorkingDirectory="INSTALLFOLDER" />
+      
+      <Shortcut Id="LogsShortcut"
+                Name="View HoneyPottr Logs"
+                Description="Open log directory"
+                Target="explorer.exe"
+                Arguments="[INSTALLFOLDER]logs"
+                WorkingDirectory="INSTALLFOLDER" />
+      
+      <Shortcut Id="DocsShortcut"
+                Name="HoneyPottr Documentation"
+                Description="View documentation"
+                Target="[INSTALLFOLDER]README.md"
                 WorkingDirectory="INSTALLFOLDER" />
       
       <Shortcut Id="UninstallShortcut"
                 Name="Uninstall HoneyPottr"
-                Description="Uninstall HoneyPottr"
+                Description="Remove HoneyPottr from your system"
                 Target="[SystemFolder]msiexec.exe"
                 Arguments="/x [ProductCode]" />
       
-      <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+      <RemoveFolder Id="RemoveApplicationProgramsFolder" On="uninstall" />
       <RegistryValue Root="HKCU" 
                      Key="Software\HoneyPottr" 
-                     Name="installed" 
+                     Name="ShortcutsInstalled" 
                      Type="integer" 
                      Value="1" 
                      KeyPath="yes" />
@@ -155,22 +255,62 @@
 
     <!-- Custom actions for service management -->
     <CustomAction Id="StopServiceBeforeUninstall"
-                  ExeCommand="net stop HoneyPottr"
+                  ExeCommand="sc stop HoneyPottr"
                   Directory="SystemFolder"
                   Execute="deferred"
                   Impersonate="no"
                   Return="ignore" />
+    
+    <CustomAction Id="CleanupArtifacts"
+                  ExeCommand="cmd.exe /c &quot;reg delete HKLM\SOFTWARE\VMware /f 2&gt;nul &amp; reg delete HKLM\SOFTWARE\Oracle\VirtualBox /f 2&gt;nul&quot;"
+                  Directory="SystemFolder"
+                  Execute="deferred"
+                  Impersonate="no"
+                  Return="ignore" />
+    
+    <CustomAction Id="ShowReadme"
+                  Directory="INSTALLFOLDER"
+                  ExeCommand="notepad.exe README.md"
+                  Return="asyncNoWait" />
 
     <!-- Installation sequence -->
     <InstallExecuteSequence>
       <Custom Action="StopServiceBeforeUninstall" Before="RemoveFiles">
         REMOVE="ALL"
       </Custom>
+      <Custom Action="CleanupArtifacts" After="RemoveFiles">
+        (REMOVE="ALL") AND (CLEANUP_ARTIFACTS="1")
+      </Custom>
     </InstallExecuteSequence>
+    
+    <!-- Property for artifact cleanup -->
+    <Property Id="CLEANUP_ARTIFACTS" Value="0" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" 
+              Value="Remove honeypot artifacts from system" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
 
     <!-- UI -->
-    <UIRef Id="WixUI_Minimal" />
-    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    <UIRef Id="WixUI_FeatureTree" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+    
+    <!-- Customization -->
+    <WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="resources\banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="resources\dialog.bmp" />
+    
+    <!-- Application icon -->
+    <Icon Id="HoneyPottrIcon" SourceFile="resources\honeypottr.ico" />
+    <Property Id="ARPPRODUCTICON" Value="HoneyPottrIcon" />
+    
+    <!-- Add/Remove Programs properties -->
+    <Property Id="ARPHELPLINK" Value="https://github.com/honeypottr/honeypottr" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/honeypottr/honeypottr" />
+    <Property Id="ARPURLUPDATEINFO" Value="https://github.com/honeypottr/honeypottr/releases" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+    <Property Id="ARPNOREPAIR" Value="1" />
+    <Property Id="ARPCOMMENTS" Value="Production-grade honeypot artifact generator with comprehensive malware deception" />
+    <Property Id="ARPCONTACT" Value="support@honeypottr.io" />
+    <Property Id="ARPSIZE" Value="10240" />
 
   </Product>
 </Wix>

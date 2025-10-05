@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # Cross-compile for Windows using MinGW
+  windows-build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+    image: honeypottr-windows-build:latest
+    volumes:
+      - ./build:/output
+    command: >
+      bash -c "
+      echo 'Copying build artifacts...' &&
+      cp -r /output/* /build/ 2>/dev/null || 
+      echo 'Build artifacts copied (or build incomplete)'
+      "
+
+  # Alternative: Windows container (requires Docker Desktop with Windows containers)
+  windows-native:
+    image: mcr.microsoft.com/windows/servercore:ltsc2022
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: >
+      cmd /c "
+      echo Building with native Windows container... &&
+      if exist build rmdir /s /q build &&
+      mkdir build && cd build &&
+      cmake -G \"Visual Studio 17 2022\" -A x64 .. &&
+      cmake --build . --config Release
+      "
+    platform: windows/amd64
+

@@ -69,6 +69,12 @@ public:
     virtual bool UpdateConfig(const ArtifactConfig& config) = 0;
 
     /**
+     * @brief Set the logger for this module
+     * @param logger Logger instance pointer
+     */
+    virtual void SetLogger(Logger* logger) = 0;
+
+    /**
      * @brief Get a list of artifacts currently being maintained
      * @return Vector of artifact descriptions
      */

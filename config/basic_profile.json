@@ -1,156 +1,63 @@
 {
   "profile": {
     "name": "basic",
-    "description": "Basic honeypot artifacts for common malware detection",
-    "version": "1.0.0",
-    "targetMalwareTypes": ["generic", "banking", "ransomware"]
+    "description": "Basic honeypot profile with minimal footprint"
   },
   "artifacts": {
-    "registry": {
-      "keys": [
-        {
-          "path": "HKEY_LOCAL_MACHINE\\SOFTWARE\\VMware, Inc.\\VMware Tools",
-          "values": [
-            {
-              "name": "InstallPath",
-              "type": "REG_SZ",
-              "data": "C:\\Program Files\\VMware\\VMware Tools\\"
-            },
-            {
-              "name": "Version",
-              "type": "REG_SZ", 
-              "data": "11.3.5"
-            }
-          ]
-        },
-        {
-          "path": "HKEY_LOCAL_MACHINE\\SOFTWARE\\Oracle\\VirtualBox Guest Additions",
-          "values": [
-            {
-              "name": "Version",
-              "type": "REG_SZ",
-              "data": "6.1.34"
-            },
-            {
-              "name": "Revision",
-              "type": "REG_SZ",
-              "data": "150636"
-            }
-          ]
-        },
-        {
-          "path": "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\VBoxService",
-          "values": [
-            {
-              "name": "Type",
-              "type": "REG_DWORD",
-              "data": 16
-            },
-            {
-              "name": "Start",
-              "type": "REG_DWORD", 
-              "data": 2
-            },
-            {
-              "name": "ImagePath",
-              "type": "REG_SZ",
-              "data": "C:\\Windows\\System32\\VBoxService.exe"
-            }
-          ]
+    "modules": {
+      "registry": {
+        "enabled": true,
+        "intensity": "low",
+        "refreshInterval": 7200,
+        "parameters": {
+          "createVMwareKeys": true,
+          "createVirtualBoxKeys": false,
+          "createSandboxieKeys": false,
+          "createAnalysisToolKeys": false
         }
-      ]
-    },
-    "filesystem": {
-      "files": [
-        {
-          "path": "C:\\Program Files\\VMware\\VMware Tools\\vmtoolsd.exe",
-          "type": "dummy_executable",
-          "size": 2048576,
-          "attributes": ["readonly", "system"]
-        },
-        {
-          "path": "C:\\Program Files\\Oracle\\VirtualBox Guest Additions\\VBoxService.exe", 
-          "type": "dummy_executable",
-          "size": 1536000,
-          "attributes": ["readonly", "system"]
-        },
-        {
-          "path": "C:\\Windows\\System32\\drivers\\VBoxMouse.sys",
-          "type": "dummy_driver",
-          "size": 65536,
-          "attributes": ["readonly", "system", "hidden"]
-        },
-        {
-          "path": "C:\\Windows\\System32\\drivers\\vmhgfs.sys",
-          "type": "dummy_driver", 
-          "size": 98304,
-          "attributes": ["readonly", "system", "hidden"]
+      },
+      "filesystem": {
+        "enabled": true,
+        "intensity": "medium",
+        "refreshInterval": 14400,
+        "parameters": {
+          "createVMwareFiles": true,
+          "createVirtualBoxFiles": false,
+          "createAnalysisToolFiles": false,
+          "createDecoyFiles": false,
+          "filePermissions": "readonly"
         }
-      ],
-      "directories": [
-        {
-          "path": "C:\\Program Files\\VMware\\VMware Tools",
-          "attributes": ["readonly"]
-        },
-        {
-          "path": "C:\\Program Files\\Oracle\\VirtualBox Guest Additions",
-          "attributes": ["readonly"]
+      },
+      "processes": {
+        "enabled": false,
+        "intensity": "low",
+        "refreshInterval": 3600,
+        "parameters": {
+          "simulateVMwareServices": false,
+          "simulateVirtualBoxServices": false,
+          "simulateAnalysisTools": false
         }
-      ]
-    },
-    "processes": {
-      "services": [
-        {
-          "name": "VBoxService",
-          "displayName": "VirtualBox Guest Additions Service",
-          "description": "Provides host integration for VirtualBox guests",
-          "simulate": true,
-          "visibility": "service_list_only"
-        },
-        {
-          "name": "VMTools", 
-          "displayName": "VMware Tools Service",
-          "description": "Provides additional functionality for VMware virtual machines",
-          "simulate": true,
-          "visibility": "service_list_only"
+      },
+      "network": {
+        "enabled": false,
+        "intensity": "low",
+        "refreshInterval": 7200,
+        "parameters": {
+          "createVirtualAdapters": false,
+          "simulateVMwareNetwork": false,
+          "simulateVirtualBoxNetwork": false
         }
-      ]
-    },
-    "hardware": {
-      "wmi_entries": [
-        {
-          "class": "Win32_ComputerSystem",
-          "properties": {
-            "Manufacturer": "VMware, Inc.",
-            "Model": "VMware Virtual Platform"
-          }
-        },
-        {
-          "class": "Win32_BIOS",
-          "properties": {
-            "Manufacturer": "VMware, Inc.",
-            "Version": "VMW71.00V.16707776.B64.2008070230"
-          }
-        },
-        {
-          "class": "Win32_BaseBoard",
-          "properties": {
-            "Manufacturer": "VMware, Inc.",
-            "Product": "440BX Desktop Reference Platform"
-          }
+      },
+      "hardware": {
+        "enabled": true,
+        "intensity": "low",
+        "refreshInterval": 86400,
+        "parameters": {
+          "simulateVMwareBIOS": true,
+          "simulateVirtualBoxBIOS": false,
+          "simulateVirtualHardware": false
         }
-      ]
+      }
     }
-  },
-  "detection_triggers": {
-    "common_checks": [
-      "vmware_registry_check",
-      "virtualbox_registry_check", 
-      "vm_file_existence_check",
-      "vm_service_check",
-      "vm_hardware_check"
-    ],
-    "effectiveness_rating": "high",
-    "false_positive_risk": "low"
   }
 }
